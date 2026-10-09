@@ -1,0 +1,24 @@
+# IDE
+.idea/
+*.iml
+out/
+
+# 빌드 결과
+build/
+.gradle/
+*.class
+*.log
+
+# 비밀 값 (DB 비밀번호 등). 설정 파일에는 ${환경변수}로만 쓰기
+.env
+application-local.yaml
+application-local.yml
+application-local.properties
+
+# 프론트엔드 (나중에)
+node_modules/
+dist/
+
+# 운영체제
+.DS_Store
+Thumbs.db
