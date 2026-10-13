@@ -18,6 +18,9 @@ repositories {
 }
 
 dependencies {
+    //implementation	내 코드에서 import해서 직접 쓰는 라이브러리 (MyBatis, 웹)
+    //runtimeOnly	내 코드는 모르고 실행할 때만 뒤에서 쓰는 것 (DB 드라이버)
+    //compileOnly	컴파일할 때만 필요한 것 (Lombok)
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -26,6 +29,9 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+    // DB
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.0'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 }
 
 tasks.named('test') {

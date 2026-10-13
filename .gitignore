@@ -11,6 +11,7 @@ build/
 
 # 비밀 값 (DB 비밀번호 등). 설정 파일에는 ${환경변수}로만 쓰기
 .env
+*.env
 application-local.yaml
 application-local.yml
 application-local.properties

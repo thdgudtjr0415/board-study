@@ -1,3 +1,16 @@
 spring:
   application:
-    name: board-study
+    name: board-study                  # 앱 이름 (로그에 [board-study]로 찍힘)
+
+  config:
+    # 작업 폴더(backend/)의 pwd.env 파일을 읽어서 설정에 합친다.
+    #  - .env류 파일은 이 앱이 자동으로 읽지 않아서 여기서 불러오라고 알려준다.
+    #  - [.properties]는 "이 파일을 KEY=값 형식으로 읽어라"는 뜻
+    #  - optional: 은 파일이 없어도 에러를 내지 않는다
+    #    (없으면 아래 ${DB_PASSWORD}를 못 찾아서 그때 에러가 난다)
+    import: optional:file:pwd.env[.properties]
+
+  datasource:                          # DB 접속 정보 (이 값이 있어야 DataSource가 만들어진다)
+    url: jdbc:mariadb://localhost:3306/board_study   # 내 컴퓨터(localhost)의 MariaDB(3306 포트)의 board_study DB
+    username: board_user               # board_study DB만 쓸 수 있는 계정 (root 아님)
+    password: ${DB_PASSWORD}           # 비밀번호는 파일에 쓰지 않고 pwd.env(또는 환경변수)의 DB_PASSWORD에서 읽는다
