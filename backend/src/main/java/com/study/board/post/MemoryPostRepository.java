@@ -16,8 +16,9 @@ public class MemoryPostRepository implements PostRepository{
         Long id = sequence++;
         String title = post.getTitle();
         String content = post.getContent();
+        Long memberId = post.getMemberId();
 
-        Post saved = new Post(id, title, content);
+        Post saved = new Post(id, title, content, memberId);
         store.add(saved);
         System.out.println("게시글이 저장되었습니다.");
         return saved;

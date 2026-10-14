@@ -13,10 +13,10 @@ public class PostService {
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
-    public Post create(String title, String content){
+    public Post create(String title, String content, Long memberId){
         System.out.println("[Service] title=" + title + ", content=" + content);
 
-        Post newPost = new Post(null, title, content);
+        Post newPost = new Post(null, title, content, memberId);
         Post saved = postRepository.save(newPost);
         return saved;
     }

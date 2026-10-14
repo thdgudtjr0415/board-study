@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: board-study                  # 앱 이름 (로그에 [board-study]로 찍힘)
@@ -14,3 +17,14 @@ spring:
     url: jdbc:mariadb://localhost:3306/board_study   # 내 컴퓨터(localhost)의 MariaDB(3306 포트)의 board_study DB
     username: board_user               # board_study DB만 쓸 수 있는 계정 (root 아님)
     password: ${DB_PASSWORD}           # 비밀번호는 파일에 쓰지 않고 pwd.env(또는 환경변수)의 DB_PASSWORD에서 읽는다
+
+  jpa:
+    hibernate:
+      ddl-auto: none     # 테이블을 JPA가 만들거나 바꾸지 않는다 (스키마는 db/schema.sql 이 관리)
+    show-sql: true       # 실행되는 SQL을 콘솔에 보여 준다 (학습용)
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+logging:
+  level:
+    org.hibernate.orm.connections.pooling: warn   # 시작할 때 접속 주소(비밀번호 포함)를 찍는 로그를 끈다

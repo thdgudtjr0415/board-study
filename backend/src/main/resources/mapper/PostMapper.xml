@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DOCTYPE: "이 XML은 MyBatis 매퍼 문법을 따른다"는 정해진 선언. 외우지 말고 복사해서 쓴다 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+  namespace = 이 SQL들이 속한 인터페이스의 "패키지 포함 이름".
+  PostMapper.java 와 정확히 같아야 연결된다. (다르면 Invalid bound statement 에러)
+-->
+<mapper namespace="com.study.board.post.PostMapper">
+
+    <!--
+      resultMap = "DB의 한 행을 Post 객체로 만드는 설명서".
+
+      왜 <constructor>인가?
+        - Post 는 기본 생성자와 setter 가 없고, 생성자로만 만들 수 있다.
+        - (렌탈브레인은 setter 가 있어서 <result property=...> 로 필드 이름을 짝지었다)
+        - 그래서 "생성자의 n번째 인자에 어떤 열의 값을 넣을지"를 줄 순서로 알려 준다.
+
+      주의 1: 아래 순서는 Post(Long id, String title, String content, Long memberId) 와 같아야 한다.
+              타입이 같은 title/content 순서를 바꾸면 에러도 없이 값만 뒤바뀐다.
+      주의 2: column 은 "SELECT 결과의 열 이름"이다. 자바 필드 이름(memberId)이 아니라 DB 이름(member_id).
+              (SELECT 에서 AS 별칭을 붙였다면 그 별칭을 적는다)
+      idArg 와 arg 는 동작이 같다. idArg 는 기본키 열이라는 표시일 뿐이다.
+      javaType 은 MyBatis 가 "타입 순서가 일치하는 생성자"를 찾는 단서다.
+      이 방식은 DB에서 읽은 값도 new Post(...) 를 거치므로 validate 를 통과해야 한다.
+    -->
+    <resultMap id="postMap" type="com.study.board.post.Post">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long"/>
+            <arg column="title" javaType="java.lang.String"/>
+            <arg column="content" javaType="java.lang.String"/>
+            <arg column="member_id" javaType="java.lang.Long"/>
+        </constructor>
+    </resultMap>
+
+    <!-- id = PostMapper 인터페이스의 메소드 이름(findAll). resultMap = 결과를 만들 때 쓸 설명서 -->
+    <select id="findAll" resultMap="postMap">
+        SELECT id, title, content, member_id
+        FROM post
+        ORDER BY id
+    </select>
+
+    <!--
+      #{id} = 메소드 파라미터 id 가 들어갈 자리.
+      실제로는 "WHERE id = ?" 와 값 3 이 따로 DB 에 전달된다 (SQL 주입 공격 방지).
+      ${id} 는 문자열을 그냥 끼워 넣어서 위험하므로 값 자리에는 쓰지 않는다.
+    -->
+    <select id="findById" resultMap="postMap">
+        SELECT id, title, content, member_id
+        FROM post
+        WHERE id = #{id}
+    </select>
+<!-- 아래는 insert 예시 -->
+<!--    <insert id="save" useGeneratedKeys="true" keyProperty="id">-->
+<!--        INSERT INTO post (title, content, member_id)-->
+<!--        VALUES (#{title}, #{content}, #{memberId})-->
+<!--    </insert>-->
+</mapper>

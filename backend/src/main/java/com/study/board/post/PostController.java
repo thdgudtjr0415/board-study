@@ -22,10 +22,8 @@ public class PostController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PostResponse create(@RequestBody PostCreateRequest request){
-//        System.out.println("[Controller] 받은 요청 : " + request);
-        Post newPost = postService.create(request.title(), request.content());
+        Post newPost = postService.create(request.title(), request.content(), request.memberId());
         PostResponse response = PostResponse.from(newPost);
-//        System.out.println("[Controller] 응답: " + response);
         return response;
     }
     @GetMapping
