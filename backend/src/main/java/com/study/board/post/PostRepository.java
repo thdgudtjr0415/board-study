@@ -11,4 +11,6 @@ public interface PostRepository {
     List<Post> findAll();                // ② 글 전체를 돌려준다
     Optional<Post> findById(Long id);        // ③ 번호로 찾는다. 없을 수도 있다
     void deleteById(Long id);
+
+    Optional<Post> findByIdForUpdate(Long id);
 }

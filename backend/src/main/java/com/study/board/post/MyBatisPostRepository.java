@@ -42,4 +42,9 @@ public class MyBatisPostRepository implements PostRepository{
     public void deleteById(Long id) {
         postJpaRepository.deleteById(id);
     }
+    // update
+    @Override
+    public Optional<Post> findByIdForUpdate(Long id) {
+        return postJpaRepository.findById(id);
+    }
 }
