@@ -1,27 +1,27 @@
 package com.study.board.post;
 
 import com.study.board.member.MemberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final PostJpaRepository postJpaRepository;
 
     @Autowired
-    public PostService(PostRepository postRepository, MemberRepository memberRepository, PostJpaRepository postJpaRepository) {
+    public PostService(PostRepository postRepository, MemberRepository memberRepository) {
         this.postRepository = postRepository;
         this.memberRepository = memberRepository;
-        this.postJpaRepository = postJpaRepository;
     }
     // 생성
     public Post create(String title, String content, Long memberId){
-        System.out.println("[Service] title=" + title + ", content=" + content);
+        log.info("글 생성 요청 memberId = {}", memberId);
 
         Post newPost = new Post(null, title, content, memberId);
         if(!memberRepository.existsById(memberId)){
@@ -46,6 +46,7 @@ public class PostService {
     }
 
     // update
+    // JPA로 읽은 객체만 JPA가 수정 가능, 여기서 그냥 일반 MyBatis로 post가져오면 응답은 될지라도 수정은 안됨
     @Transactional
     public Post update(Long id, String title, String content){
         Post post = postRepository.findByIdForUpdate(id)

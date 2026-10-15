@@ -29,6 +29,10 @@ public class Post {
         if(title == null || title.isBlank() || content == null || content.isBlank()){
             throw new IllegalArgumentException("제목 혹은 내용이 비었습니다.");
         }
+        // title varchar255 이기 때문에 예외 던져야함, 그리고 길이 예외는 null 검사 이후에 하기
+        if(title.length() > 255){
+            throw new IllegalArgumentException("제목의 길이는 255자 이하여야 합니다.");
+        }
     }
 
     // 파라미터 순서는 PostMapper.xml 의 <constructor> 안 <idArg>/<arg> 순서와 같아야 한다.

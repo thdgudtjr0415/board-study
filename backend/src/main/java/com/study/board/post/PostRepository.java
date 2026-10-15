@@ -1,11 +1,9 @@
 package com.study.board.post;
 
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+//@Repository -> 이건 있으나 마나
 public interface PostRepository {
     Post save(Post post);          // ① 저장한 글(번호가 붙은 것)을 돌려준다
     List<Post> findAll();                // ② 글 전체를 돌려준다
