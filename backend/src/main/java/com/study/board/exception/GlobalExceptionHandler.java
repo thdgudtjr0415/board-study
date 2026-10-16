@@ -1,12 +1,15 @@
-package com.study.board.post;
+package com.study.board.exception;
 
+import com.study.board.post.PostNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.study.board.member.DuplicateLoginIdException;
 
+// 모든 컨트롤러에 적용되는 전역 예외 처리
 @RestControllerAdvice
-public class PostExceptionHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(PostNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -15,7 +18,13 @@ public class PostExceptionHandler {
     }
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleNotContent(IllegalArgumentException e){
+    public String handleBadRequest(IllegalArgumentException e){
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(DuplicateLoginIdException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String handleDuplicateLoginId(DuplicateLoginIdException e){
         return e.getMessage();
     }
 }
