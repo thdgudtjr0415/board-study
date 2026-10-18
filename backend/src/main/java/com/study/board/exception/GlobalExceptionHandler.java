@@ -2,6 +2,7 @@ package com.study.board.exception;
 
 import com.study.board.post.PostNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,5 +27,10 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public String handleDuplicateLoginId(DuplicateLoginIdException e){
         return e.getMessage();
+    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleValidation(MethodArgumentNotValidException e){
+        return e.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
     }
 }

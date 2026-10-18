@@ -1,6 +1,7 @@
 package com.study.board.member;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
 @Getter
@@ -16,7 +17,6 @@ public class Member {
     private String pwd;
     @Column(name = "name")
     private String name;
-
 
 //    private LocalDateTime created_at; -> DEFAULT CURRENT_TIMESTAMP 으로 알아서 들어감
 
@@ -34,10 +34,11 @@ public class Member {
 
     private static void validate(String loginId, String pwd, String name){
         check(loginId, "로그인 아이디", 1, 20);
-        check(pwd, "비밀번호", 8, 60); // 오늘은 평문(DB varchar(60)), BCrypt 적용하면 입력 최대 72로 변경
+        // 여기서 받는 pwd는 BCrypt 해시(항상 60자). 8자 이상 등 원문 규칙은 DTO(@Size)가 담당하고,
+        // 여기는 비어 있지 않고 DB 컬럼(varchar 60)에 들어가는지만 확인
+        check(pwd, "비밀번호", 1, 60);
         check(name, "이름", 1, 50);
     }
-
 
     // loginId, pwd, name 을 받는 생성자
     public Member(String loginId, String pwd, String name){

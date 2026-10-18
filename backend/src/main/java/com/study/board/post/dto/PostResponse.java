@@ -9,4 +9,3 @@ public record PostResponse(Long id, String title, String content, Long memberId)
         return new PostResponse(post.getId(),post.getTitle(),post.getContent(), post.getMemberId());
     }
 }
-    
