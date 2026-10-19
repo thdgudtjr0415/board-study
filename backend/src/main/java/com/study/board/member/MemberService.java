@@ -25,7 +25,6 @@ public class MemberService {
             throw new DuplicateLoginIdException(loginId);
         }
         String hash = passwordEncoder.encode(pwd);
-//        log.info("Encording 된 Hash = {}", hash); 제대로 Encording 됐는지 확인
         Member newMember = new Member(loginId, hash, name);
         Member saved = memberRepository.save(newMember);
         return saved;
