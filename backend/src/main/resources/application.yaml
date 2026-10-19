@@ -28,3 +28,6 @@ mybatis:
 logging:
   level:
     org.hibernate.orm.connections.pooling: warn   # 시작할 때 접속 주소(비밀번호 포함)를 찍는 로그를 끈다
+jwt:
+  secret: ${JWT_SECRET}
+  expiration-ms: 3600000 # 1000ms × 60(초) × 60(분) = 1시간 만료시간 및 유효 시간 ms 는 1000씩 써야함 이거 1초임
