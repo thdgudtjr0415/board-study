@@ -49,6 +49,8 @@ public class PostService {
     // JPA로 읽은 객체만 JPA가 수정 가능, 여기서 그냥 일반 MyBatis로 post가져오면 응답은 될지라도 수정은 안됨
     @Transactional
     public Post update(Long id, String title, String content){
+        // 글이 없으면 PostNotFoundException (비었을 때만 예외를 만들도록 람다로 미룸)
+        // 생성자에 id를 넘겨야 해서 ::new 는 못 쓰고 () -> new ... 로 씀
         Post post = postRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
         post.update(title, content);
