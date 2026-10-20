@@ -5,6 +5,7 @@ import com.study.board.post.dto.PostResponse;
 import com.study.board.post.dto.PostUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,11 +22,13 @@ public class PostController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PostResponse create(@RequestBody PostCreateRequest request){
-        Post newPost = postService.create(request.title(), request.content(), request.memberId());
+    public PostResponse create(@AuthenticationPrincipal Long memberId,
+                               @RequestBody PostCreateRequest request){
+        Post newPost = postService.create(request.title(), request.content(), memberId);
         PostResponse response = PostResponse.from(newPost);
         return response;
     }
+
     @GetMapping
     public List<PostResponse> list(){
         List<Post> allPost = postService.findAll();
@@ -49,15 +52,17 @@ public class PostController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id){
-        postService.delete(id);
+    public void delete(@PathVariable Long id,
+                       @AuthenticationPrincipal Long memberId){
+        postService.delete(id, memberId);
     }
 
     @PutMapping("/{id}")
     public PostResponse update(
             @PathVariable Long id,
+            @AuthenticationPrincipal Long memberId,
             @RequestBody PostUpdateRequest request){
-        Post post = postService.update(id, request.title(), request.content());
+        Post post = postService.update(id,memberId, request.title(), request.content());
         return PostResponse.from(post);
     }
 }

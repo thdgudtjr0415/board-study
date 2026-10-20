@@ -1,6 +1,7 @@
 package com.study.board.exception;
 
 import com.study.board.auth.LoginFailedException;
+import com.study.board.post.PostForbiddenException;
 import com.study.board.post.PostNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -40,6 +41,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(LoginFailedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public String handleLoginFailed(LoginFailedException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(PostForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handlePostForbidden(PostForbiddenException e) {
         return e.getMessage();
     }
 }

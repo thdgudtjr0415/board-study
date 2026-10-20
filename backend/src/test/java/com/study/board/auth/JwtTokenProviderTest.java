@@ -15,6 +15,7 @@ class JwtTokenProviderTest {
     @Test
     void createTokenHasThreeParts() {
         // 테스트용 임시 키 (진짜 JWT_SECRET이 아니라 실행할 때마다 새로 만들어요)
+        // [구간 1] 토큰 만들기: secret이 쓰임
         String secret = Encoders.BASE64.encode(Jwts.SIG.HS512.key().build().getEncoded());
 
         JwtTokenProvider provider = new JwtTokenProvider(secret, 3600000);     // 한시간 설정
@@ -27,6 +28,7 @@ class JwtTokenProviderTest {
         // 이유는 JWT를 .으로 나누면 헤더.페이로드.서명 이기때문에 3이 나옴
         assertEquals(3, parts.length);
 
+        // [구간 2] 페이로드 읽기: secret이 안 쓰임
         String payload = new String(Base64.getUrlDecoder().decode(parts[1]));
         System.out.println(payload);
         assertTrue(payload.contains("\"sub\":\"11\"")); // 여기서 주황색 \"는 큰따움표 " 이거 출력하려고 하는거
