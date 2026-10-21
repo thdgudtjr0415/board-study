@@ -31,3 +31,6 @@ logging:
 jwt:
   secret: ${JWT_SECRET}
   expiration-ms: 3600000 # 1000ms × 60(초) × 60(분) = 1시간 만료시간 및 유효 시간 ms 는 1000씩 써야함 이거 1초임
+# 카카오 맵 api 가져오기
+kakao:
+  rest-key: ${KAKAO_REST_KEY}
