@@ -20,13 +20,13 @@ public class KakaoPlaceClient {
     }
 
     // 키워드로 장소를 검색하고, 응답 JSON을 글자 그대로 돌려준다 (먼저 눈으로 보려고)
-    public String searchKeyword(String query) {
+    public KakaoSearchResponse searchKeyword(String query) {
         try {
             return restClient.get()
                     .uri("/v2/local/search/keyword.json?query={query}", query)
 //                .uri("/v2/local/search/keyword-wrong.json?query={query}", query)  /*틀린 url 이면 예외가 나옴*/
                     .retrieve()
-                    .body(String.class);
+                    .body(KakaoSearchResponse.class);
         } catch (RestClientException e) {
             log.warn("카카오 장소 검색 실패 {}", e.getClass().getSimpleName());   // 예외 종류만 남긴다
             throw new ExternalApiException("장소 검색 서비스에 문제가 있습니다. 잠시 후 다시 시도해 주세요.");
