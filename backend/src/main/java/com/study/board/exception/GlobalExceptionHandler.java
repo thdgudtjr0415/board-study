@@ -1,10 +1,13 @@
 package com.study.board.exception;
 
 import com.study.board.auth.LoginFailedException;
+import com.study.board.comment.CommentForbiddenException;
+import com.study.board.comment.CommentNotFoundException;
 import com.study.board.place.ExternalApiException;
 import com.study.board.post.PostForbiddenException;
 import com.study.board.post.PostNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -75,6 +78,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ExternalApiException.class)
     @ResponseStatus(HttpStatus.BAD_GATEWAY)
     public String handleExternalApi(ExternalApiException e) {
+        return e.getMessage();
+    }
+
+    // 404: 없는 댓글을 수정, 삭제하려 할 때 (CommentService)
+    @ExceptionHandler(CommentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleCommentNotFound(CommentNotFoundException e){
+        return e.getMessage();
+    }
+
+    // 403: 로그인은 했지만 남의 댓글을 수정/삭제하려 할 때 (CommentService에서 댓글의 작성자와 토큰의 회원 id를 비교)
+    @ExceptionHandler(CommentForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handleCommentForbidden(CommentForbiddenException e){
         return e.getMessage();
     }
 }

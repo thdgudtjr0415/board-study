@@ -4,10 +4,9 @@
 -- DB(board_study)와 접속 계정(board_user)은 관리자가 따로 만든다.
 -- 비밀번호는 이 파일에 쓰지 않는다.
 --
--- 실행 순서가 중요하다: post가 member를 참조(FK)하므로 member를 먼저 만든다.
--- 지울 때는 반대로 post를 먼저 지운다.
---
--- 아직 만들지 않은 것: comment (댓글 기능 때 추가)
+-- 실행 순서가 중요하다: post가 member를, comment가 member와 post를 참조(FK)하므로
+-- member -> post -> comment 순서로 만든다.
+-- 지울 때는 반대로 comment -> post -> member 순서로 지운다.
 
 
 -- 회원
@@ -30,4 +29,16 @@ CREATE TABLE post (
     view_count  INT NOT NULL DEFAULT 0,
     member_id   BIGINT NOT NULL,                      -- 작성자
     FOREIGN KEY (member_id) REFERENCES member(id)
+);
+
+-- 댓글
+CREATE TABLE comment (
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	content TEXT NOT NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	member_id BIGINT NOT NULL,
+	post_id BIGINT NOT NULL,
+	FOREIGN KEY (member_id) REFERENCES member(id),
+	FOREIGN KEY (post_id) REFERENCES post(id)
 );

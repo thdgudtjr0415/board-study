@@ -50,13 +50,6 @@ public class PostController {
         return PostResponse.from(post);
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id,
-                       @AuthenticationPrincipal Long memberId){
-        postService.delete(id, memberId);
-    }
-
     @PutMapping("/{id}")
     public PostResponse update(
             @PathVariable Long id,
@@ -64,5 +57,12 @@ public class PostController {
             @RequestBody PostUpdateRequest request){
         Post post = postService.update(id,memberId, request.title(), request.content());
         return PostResponse.from(post);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id,
+                       @AuthenticationPrincipal Long memberId){
+        postService.delete(id, memberId);
     }
 }
