@@ -24,30 +24,20 @@ public class PostController {
     @ResponseStatus(HttpStatus.CREATED)
     public PostResponse create(@AuthenticationPrincipal Long memberId,
                                @RequestBody PostCreateRequest request){
-        Post newPost = postService.create(request.title(), request.content(), memberId);
-        PostResponse response = PostResponse.from(newPost);
+        PostResponse response = postService.create(request.title(), request.content(), memberId);
         return response;
     }
 
     @GetMapping
     public List<PostResponse> list(){
-        List<Post> allPost = postService.findAll();
-
-        // [학습 메모] 같은 일을 for문으로 쓰면 (stream과 결과가 같음)
-        //  List<PostResponse> result = new ArrayList<>();
-        //  for (Post post : allPost) {
-        //      result.add(PostResponse.from(post));
-        //  }
-        //  return result;
-
-        return allPost.stream()
-                .map(PostResponse :: from)
-                .toList();
+        return postService.findAllWithAuthor();
     }
+
+    // 게시글 상세
     @GetMapping("/{id}")
     public PostResponse get(@PathVariable Long id){
-        Post post = postService.findById(id);
-        return PostResponse.from(post);
+        PostResponse post = postService.findResponseById(id);
+        return post;
     }
 
     @PutMapping("/{id}")
@@ -55,8 +45,8 @@ public class PostController {
             @PathVariable Long id,
             @AuthenticationPrincipal Long memberId,
             @RequestBody PostUpdateRequest request){
-        Post post = postService.update(id,memberId, request.title(), request.content());
-        return PostResponse.from(post);
+        PostResponse post = postService.update(id,memberId, request.title(), request.content());
+        return post;
     }
 
     @DeleteMapping("/{id}")

@@ -1,5 +1,6 @@
 package com.study.board.post;
 
+import com.study.board.post.dto.PostResponse;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.Optional;
 @Mapper
 public interface PostMapper {
     // 메소드 이름이 XML 의 id 와 다르면 "Invalid bound statement (not found)" 에러가 난다
-    List<Post> findAll();
     Optional<Post> findById(Long id);
-
+    List<PostResponse> findAllWithAuthor();
+    Optional<PostResponse> findResponseById(Long id);
 }

@@ -33,12 +33,30 @@
             <arg column="member_id" javaType="java.lang.Long"/>
         </constructor>
     </resultMap>
+    <resultMap id="postResponseMap" type="com.study.board.post.dto.PostResponse">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long"/>
+            <arg column="title" javaType="java.lang.String"/>
+            <arg column="content" javaType="java.lang.String"/>
+            <arg column="member_id" javaType="java.lang.Long"/>
+            <arg column="author_name" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
 
-    <!-- id = PostMapper 인터페이스의 메소드 이름(findAll). resultMap = 결과를 만들 때 쓸 설명서 -->
-    <select id="findAll" resultMap="postMap">
-        SELECT id, title, content, member_id
-        FROM post
-        ORDER BY id
+    <!-- 작성자 이름 추가  -->
+    <select id="findAllWithAuthor" resultMap="postResponseMap">
+        SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name
+        FROM post p
+        JOIN member m ON p.member_id = m.id
+        ORDER BY p.id
+    </select>
+
+    <!--  작성자 이름 추가하는 것 때문에 resultMap 만들어서 사용, JOIN 포함  -->
+    <select id="findResponseById" resultMap="postResponseMap">
+        SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name
+        FROM post p
+        JOIN member m ON p.member_id = m.id
+        WHERE p.id = #{id}
     </select>
 
     <!--

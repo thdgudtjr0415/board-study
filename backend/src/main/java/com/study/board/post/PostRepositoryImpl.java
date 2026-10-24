@@ -1,5 +1,6 @@
 package com.study.board.post;
 
+import com.study.board.post.dto.PostResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -34,12 +35,6 @@ public class PostRepositoryImpl implements PostRepository{
         return postJpaRepository.save(post);
     }
 
-    // findAll은 그대로 돌려주기
-    @Override
-    public List<Post> findAll() {
-        return postMapper.findAll();
-    }
-
     @Override
     public Optional<Post> findById(Long id) {
         return postMapper.findById(id);
@@ -54,5 +49,16 @@ public class PostRepositoryImpl implements PostRepository{
     @Override
     public Optional<Post> findByIdForUpdate(Long id) {
         return postJpaRepository.findById(id);
+    }
+
+    // 아래 두개는 작성자 추가 때문에 작성
+    @Override
+    public List<PostResponse> findAllWithAuthor() {
+        return postMapper.findAllWithAuthor();
+    }
+
+    @Override
+    public Optional<PostResponse> findResponseById(Long id) {
+        return postMapper.findResponseById(id);
     }
 }
