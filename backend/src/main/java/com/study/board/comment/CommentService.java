@@ -1,5 +1,8 @@
 package com.study.board.comment;
 
+import com.study.board.comment.dto.CommentResponse;
+import com.study.board.member.Member;
+import com.study.board.member.MemberRepository;
 import com.study.board.post.PostNotFoundException;
 import com.study.board.post.PostRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -14,13 +17,20 @@ import java.util.List;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final CommentMapper commentMapper;
+    private final MemberRepository memberRepository;
 
 
     @Autowired
-    public CommentService(CommentRepository commentRepository, PostRepository postRepository) {
+    public CommentService(CommentRepository commentRepository,
+                          PostRepository postRepository,
+                          CommentMapper commentMapper, MemberRepository memberRepository) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.commentMapper = commentMapper;
+        this.memberRepository = memberRepository;
     }
+
     // postId를 검증하는게 여러번 나와서 따로 뺌
     private void checkPostExists(Long postId){
         postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
@@ -36,29 +46,33 @@ public class CommentService {
         return comment;
     }
 
-    public Comment create(Long memberId, Long postId, String content){
+    public CommentResponse create(Long memberId, Long postId, String content){
         log.info("댓글 생성 요청 memberId : {}, postId : {}", memberId, postId); // content를 넣으면 너무 길어짐
         Comment newComment = new Comment(null, content, memberId, postId);
         // 글이 있는지 확인만 한다 (결과는 안 씀). 없으면 PostNotFoundException → 404.
         // 이 확인이 없으면 없는 글의 id로 저장하다 DB의 FK 오류가 나서 처리 안 된 500이 됨
         checkPostExists(postId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 회원입니다: " + memberId));
         Comment saved = commentRepository.save(newComment);
-        return saved;
+        return CommentResponse.from(saved, member.getName());
     }
     // 목록
-    public List<Comment> findByPostId(Long postId){
+    public List<CommentResponse> findByPostId(Long postId){
         checkPostExists(postId);
-        return commentRepository.findByPostId(postId);
+        return commentMapper.findByPostIdWithAuthor(postId);
     }
     // 수정
     // 1) 댓글을 찾고 내 댓글인지 확인한다 (없으면 404, 남의 댓글이면 403)
     // 2) 내용을 바꾼다 (comment.update, 빈 내용이면 400)
     // 3) 수정된 댓글을 돌려준다
     @Transactional
-    public Comment update(Long id, Long memberId, String content){
+    public CommentResponse update(Long id, Long memberId, String content){
         Comment comment = findOwnedComment(id, memberId);
         comment.update(content);
-        return comment;
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다: " + memberId));
+        return CommentResponse.from(comment, member.getName());
     }
 
     // 삭제

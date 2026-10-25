@@ -25,34 +25,22 @@ public class CommentController {
                                   @AuthenticationPrincipal Long memberId,
                                   @RequestBody CommentRequest request){
         // service 에서 memberId, postId, content 순으로 작성해서 그거 따라가기
-        Comment newComment = commentService.create(memberId, postId, request.content());
-        CommentResponse response = CommentResponse.from(newComment);
+        CommentResponse response = commentService.create(memberId, postId, request.content());
         return response;
     }
     @GetMapping("/posts/{postId}/comments")
     // 기본 200이라 굳이 ResponseStatus 안씀
-    // 여기서 PathVariable 들 쓰는것들은 전무 url에 들어가서 쓰는거임
+    // 여기서 PathVariable 들 쓰는것들은 전부 url에 들어가서 쓰는거임
     public List<CommentResponse> list(@PathVariable Long postId){
-        List<Comment> postByComment = commentService.findByPostId(postId);
-
-//        이거랑 같음
-//        List<CommentResponse> result = new ArrayList<>();
-//        for (Comment comment : postByComment) {
-//            result.add(CommentResponse.from(comment));
-//        }
-//        return result;
-
-        return postByComment.stream()
-                .map(CommentResponse::from) //.map(comment -> CommentResponse.from(comment)) 이거랑 같음
-                .toList();
+        return commentService.findByPostId(postId);
     }
     // 수정, 이것도 기본 200 이라 responseStatus안씀
     @PutMapping("/comments/{id}")
     public CommentResponse update(@PathVariable Long id,
                                   @AuthenticationPrincipal Long memberId,
                                   @RequestBody CommentRequest request){
-        Comment comment = commentService.update(id, memberId, request.content());
-        return CommentResponse.from(comment);
+        CommentResponse comment = commentService.update(id, memberId, request.content());
+        return comment;
     }
 
     // 삭제
