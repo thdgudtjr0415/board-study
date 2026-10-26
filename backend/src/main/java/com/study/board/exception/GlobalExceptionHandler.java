@@ -3,6 +3,8 @@ package com.study.board.exception;
 import com.study.board.auth.LoginFailedException;
 import com.study.board.comment.CommentForbiddenException;
 import com.study.board.comment.CommentNotFoundException;
+import com.study.board.notification.NotificationForbiddenException;
+import com.study.board.notification.NotificationNotFoundException;
 import com.study.board.place.ExternalApiException;
 import com.study.board.post.PostForbiddenException;
 import com.study.board.post.PostNotFoundException;
@@ -92,6 +94,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CommentForbiddenException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleCommentForbidden(CommentForbiddenException e){
+        return e.getMessage();
+    }
+    // 404: 없는 알림을 읽음 처리하려 할 때 (NotificationService)
+    @ExceptionHandler(NotificationNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleNotificationNotFound(NotificationNotFoundException e){
+        return e.getMessage();
+    }
+
+    // 403: 로그인은 했지만 남에게 온 알림을 읽음 처리하려 할 때 (NotificationService에서 알림의 받는 사람과 토큰의 회원 id를 비교)
+    @ExceptionHandler(NotificationForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handleNotificationForbidden(NotificationForbiddenException e){
         return e.getMessage();
     }
 }

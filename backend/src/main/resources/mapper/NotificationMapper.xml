@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.study.board.notification.NotificationMapper">
+    <resultMap id="notificationResponseMap" type="com.study.board.notification.dto.NotificationResponse">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long"/>
+            <arg column="post_id" javaType="java.lang.Long"/>
+            <arg column="comment_id" javaType="java.lang.Long"/>
+            <arg column="commenter_name" javaType="java.lang.String"/>
+            <arg column="comment_preview" javaType="java.lang.String"/>
+            <arg column="is_read" javaType="java.lang.Boolean"/>      <!-- 여기 주의 -->
+            <arg column="created_at" javaType="java.time.LocalDateTime"/>
+        </constructor>
+    </resultMap>
+
+    <!-- 내가 받은 알림 목록. 댓글 쓴 사람 이름(c.member_id로 member 연결)과 댓글 앞 10글자 포함, 최신순 -->
+    <select id="findByMemberId" resultMap="notificationResponseMap">
+        SELECT
+        n.id,
+        n.post_id,
+        n.comment_id,
+        m.name AS commenter_name,
+        <!-- 알림 할때 앞글자 10개만 가져올려고 CONCAT 사용 -->
+        CONCAT(LEFT(c.content, 10), IF(CHAR_LENGTH(c.content) > 10, '...', '')) AS comment_preview,
+        n.is_read,
+        n.created_at
+        FROM notification n
+        JOIN comment c ON n.comment_id = c.id
+        JOIN member m ON c.member_id = m.id
+        WHERE n.member_id = #{memberId}
+        ORDER BY n.id DESC
+    </select>
+
+    <select id="countUnread" resultType="long">
+        SELECT COUNT(*)
+        FROM notification
+        WHERE member_id = #{memberId} AND is_read = 0 <!-- 안읽음이 지금 is_read에서 0, 읽음은 1 -->
+    </select>
+</mapper>
