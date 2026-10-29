@@ -57,3 +57,13 @@ CREATE TABLE notification (
 	FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE,
 	FOREIGN KEY (comment_id) REFERENCES comment(id) ON DELETE CASCADE
 );
+select * from notification order by id desc;
+
+
+
+SELECT n.id, m.name
+FROM notification n
+JOIN comment c ON n.comment_id = c.id
+JOIN member m ON c.member_id = m.id;
+
+SELECT id, is_read FROM notification;
