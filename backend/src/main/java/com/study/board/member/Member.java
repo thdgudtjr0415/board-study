@@ -1,7 +1,6 @@
 package com.study.board.member;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
 @Getter

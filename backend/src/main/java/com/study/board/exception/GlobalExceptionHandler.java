@@ -9,7 +9,6 @@ import com.study.board.place.ExternalApiException;
 import com.study.board.post.PostForbiddenException;
 import com.study.board.post.PostNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
