@@ -22,6 +22,13 @@ spring:
     hibernate:
       ddl-auto: none     # 테이블을 JPA가 만들거나 바꾸지 않는다 (스키마는 db/schema.sql 이 관리)
     show-sql: true       # 실행되는 SQL을 콘솔에 보여 준다 (학습용)
+
+  # 이미지 업로드
+  servlet:
+    multipart:
+      max-file-size: 5MB      # 파일 하나의 최대 크기
+      max-request-size: 6MB   # 요청 전체의 최대 크기 (파일 + 나머지 값)
+
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 
