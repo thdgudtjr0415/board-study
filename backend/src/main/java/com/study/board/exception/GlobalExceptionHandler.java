@@ -3,6 +3,7 @@ package com.study.board.exception;
 import com.study.board.auth.LoginFailedException;
 import com.study.board.comment.CommentForbiddenException;
 import com.study.board.comment.CommentNotFoundException;
+import com.study.board.image.ImageNotFoundException;
 import com.study.board.image.InvalidImageException;
 import com.study.board.notification.NotificationForbiddenException;
 import com.study.board.notification.NotificationNotFoundException;
@@ -123,5 +124,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public String handleMaxUploadSize(MaxUploadSizeExceededException e){
         return "파일 크기가 너무 큽니다. 최대 5MB까지 올릴 수 있습니다.";
+    }
+
+    // 404 이미지 파일 없음
+    @ExceptionHandler(ImageNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleImageNotFound(ImageNotFoundException e){
+        return e.getMessage();
     }
 }

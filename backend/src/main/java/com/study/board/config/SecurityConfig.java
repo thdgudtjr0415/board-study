@@ -24,6 +24,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()                         // 로그인 API는 누구나
                         .requestMatchers(HttpMethod.POST, "/members").permitAll()        // 회원 가입은 누구나
                         .requestMatchers(HttpMethod.GET, "/posts", "/posts/**").permitAll()  // 글 읽기는 누구나
+                        .requestMatchers(HttpMethod.GET, "/images/**").permitAll() // 이미지 보는 것은 누구나
                         .anyRequest().authenticated()                                    // 나머지는 인증 필요
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

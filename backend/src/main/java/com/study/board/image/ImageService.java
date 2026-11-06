@@ -2,11 +2,13 @@ package com.study.board.image;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -15,6 +17,11 @@ public class ImageService {
     private static final List<String> ALLOWED_EXTENSIONS = List.of("jpg", "jpeg", "png");
     private static final List<String> ALLOWED_TYPES = List.of("image/jpeg", "image/png");
     private final ImageStorage imageStorage;
+
+    // UUID(8-4-4-4-12자리 16진수) + "." + jpg, jpeg, png
+    // 이미지 이름을 정규표현식으로 검사(post 보낼때 아무 글자를 넣어도 통과되는 문제 때문에)
+    private static final Pattern IMAGE_NAME = Pattern.compile(
+            "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.(jpg|jpeg|png)$");
 
     @Autowired
     public ImageService(ImageStorage imageStorage) {
@@ -48,6 +55,20 @@ public class ImageService {
         String fileName = file.getOriginalFilename();
         String ext = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
         return imageStorage.save(file, ext);
+    }
+
+    public Resource load(String fileName) {
+        // ㄱ) 이름이 우리가 만든 모양이 아니면 404 (../ 같은 경로 조작을 막는다)
+        if(!IMAGE_NAME.matcher(fileName).matches()){
+            throw new ImageNotFoundException("이미지를 찾을 수 없습니다.");
+        }
+        // ㄴ) 저장소에서 꺼낸다
+        Resource file = imageStorage.load(fileName);
+        if(!file.exists()){
+            throw new ImageNotFoundException("이미지를 찾을 수 없습니다.");
+        }
+        // ㄹ) Resource를 돌려준다
+        return file;
     }
 
 }

@@ -1,6 +1,8 @@
 package com.study.board.image;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,5 +39,15 @@ public class LocalImageStorage implements ImageStorage {
         }
         // ㅂ) 저장한 파일 이름을 돌려준다
         return fileName;
+    }
+
+    @Override
+    public Resource load(String fileName) {
+        // 저장할 때와 같은 폴더 경로를 만든다
+        Path dir = Path.of(uploadDir);
+        // 폴더 + 파일 이름으로 파일의 경로를 만든다 (save와 같은 방식)
+        Path filePath = dir.resolve(fileName);
+        // FileSystemResource : 그 경로의 파일을 가리키는 Resource를 만들어 돌려준다
+        return new FileSystemResource(filePath);
     }
 }
