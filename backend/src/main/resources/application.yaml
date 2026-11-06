@@ -41,3 +41,7 @@ jwt:
 # 카카오 맵 api 가져오기
 kakao:
   rest-key: ${KAKAO_REST_KEY}
+
+# 이미지 파일을 저장할 폴더 (backend 폴더 기준 상대 경로)
+image:
+  upload-dir: uploads

@@ -1,11 +1,11 @@
 package com.study.board.image;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -14,6 +14,12 @@ public class ImageService {
     // 허용하는 목록 (바뀌지 않는 값이라 static final, 이름은 대문자)
     private static final List<String> ALLOWED_EXTENSIONS = List.of("jpg", "jpeg", "png");
     private static final List<String> ALLOWED_TYPES = List.of("image/jpeg", "image/png");
+    private final ImageStorage imageStorage;
+
+    @Autowired
+    public ImageService(ImageStorage imageStorage) {
+        this.imageStorage = imageStorage;
+    }
 
     public void validate(MultipartFile file) {
         // 1) 파일이 비었으면 400
@@ -36,6 +42,12 @@ public class ImageService {
         if(type == null || !ALLOWED_TYPES.contains(type)){
             throw new InvalidImageException("허용하지 않는 파일 종류입니다: " + type);
         }
+    }
+    public String upload(MultipartFile file){
+        validate(file);
+        String fileName = file.getOriginalFilename();
+        String ext = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+        return imageStorage.save(file, ext);
     }
 
 }
