@@ -3,6 +3,7 @@ package com.study.board.exception;
 import com.study.board.auth.LoginFailedException;
 import com.study.board.comment.CommentForbiddenException;
 import com.study.board.comment.CommentNotFoundException;
+import com.study.board.image.InvalidImageException;
 import com.study.board.notification.NotificationForbiddenException;
 import com.study.board.notification.NotificationNotFoundException;
 import com.study.board.place.ExternalApiException;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.study.board.member.DuplicateLoginIdException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 // 모든 컨트롤러에 적용되는 전역 예외 처리
 // 예외 클래스는 각 도메인 패키지에 있고(무슨 일이 일어났나), 여기서는 그 예외를 HTTP 번호로 바꾼다(어떻게 응답하나)
@@ -107,5 +109,19 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleNotificationForbidden(NotificationForbiddenException e){
         return e.getMessage();
+    }
+
+    // 400: 허용하지 않는 이미지(빈 파일, 확장자, 종류)를 올렸을 때 (ImageService)
+    @ExceptionHandler(InvalidImageException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleInvalidImage(InvalidImageException e){
+        return e.getMessage();
+    }
+
+    // 413: 허용 크기(spring.servlet.multipart.max-file-size)를 넘는 파일을 올렸을 때 (Spring이 컨트롤러에 들어가기 전에 던짐)
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
+    public String handleMaxUploadSize(MaxUploadSizeExceededException e){
+        return "파일 크기가 너무 큽니다. 최대 5MB까지 올릴 수 있습니다.";
     }
 }
