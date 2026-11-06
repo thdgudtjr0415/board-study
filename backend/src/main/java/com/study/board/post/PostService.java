@@ -1,6 +1,7 @@
 package com.study.board.post;
 
 import com.study.board.comment.CommentRepository;
+import com.study.board.image.ImageService;
 import com.study.board.member.Member;
 import com.study.board.member.MemberRepository;
 import com.study.board.post.dto.PostResponse;
@@ -19,14 +20,16 @@ public class PostService {
     // CommentService 대신 Repository를 받음: 글 삭제 때 댓글을 지우는 일에는 지킬 규칙이 없고,
     // 서로 Service를 부르면 나중에 순환 참조가 날 수 있어서 (댓글에 규칙이 생기면 Service로 옮김)
     private final CommentRepository commentRepository; // 댓글 삭제 때문에 들어옴
+    private final ImageService imageService;
 
     @Autowired
     public PostService(PostRepository postRepository,
                        MemberRepository memberRepository,
-                       CommentRepository commentRepository) {
+                       CommentRepository commentRepository, ImageService imageService) {
         this.postRepository = postRepository;
         this.memberRepository = memberRepository;
         this.commentRepository = commentRepository;
+        this.imageService = imageService;
     }
     // 생성
     public PostResponse create(String title, String content, Long memberId, String imageName){
@@ -82,5 +85,6 @@ public class PostService {
         }
         commentRepository.deleteByPostId(post.getId());
         postRepository.deleteById(post.getId());
+        imageService.delete(post.getImageName());
     }
 }

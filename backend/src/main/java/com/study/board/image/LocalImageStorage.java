@@ -50,4 +50,19 @@ public class LocalImageStorage implements ImageStorage {
         // FileSystemResource : 그 경로의 파일을 가리키는 Resource를 만들어 돌려준다
         return new FileSystemResource(filePath);
     }
+
+    @Override
+    public void delete(String fileName) {
+        // ㄱ) 폴더 경로를 만든다 (save, load와 같은 방식)
+        Path dir = Path.of(uploadDir);
+        // ㄴ) 폴더 + 파일 이름으로 파일 경로를 만든다
+        Path filePath = dir.resolve(fileName);
+        // ㄷ) 그 파일을 지운다. 지우다 실패하면 IOException이 난다
+        //     실패하면 RuntimeException("이미지를 삭제하지 못했습니다.", e)로 바꿔 던진다
+        try {
+            Files.deleteIfExists(filePath);   // 이런 표현 알아두기
+        } catch (IOException e) {
+            throw new RuntimeException("이미지를 삭제하지 못했습니다.", e);
+        }
+    }
 }

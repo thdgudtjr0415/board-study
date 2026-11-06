@@ -70,5 +70,21 @@ public class ImageService {
         // ㄹ) Resource를 돌려준다
         return file;
     }
-
+    public void delete(String fileName) {
+        // ㄱ) 이름이 없으면(이미지가 없는 글) 할 일이 없다
+        if(fileName == null){
+            return;
+        }
+        // ㄴ) 모양이 틀리면: 지우지 않고 로그만 남기고 끝낸다
+        if (!IMAGE_NAME.matcher(fileName).matches()) {
+            log.warn("이미지 이름이 올바르지 않아 삭제하지 않습니다: {}", fileName);
+            return;
+        }
+        // ㄷ) 저장소에 지우라고 시킨다. 실패하면 예외를 밖으로 던지지 말고 log.warn으로 남긴다
+        try {
+            imageStorage.delete(fileName);
+        } catch (Exception e) {
+            log.warn("이미지 삭제의 실패했습니다: {}", fileName, e);
+        }
+    }
 }
