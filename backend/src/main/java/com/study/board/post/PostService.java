@@ -69,7 +69,11 @@ public class PostService {
         if(!post.getMemberId().equals(memberId)){
             throw new PostForbiddenException();
         }
+        String oldImageName = post.getImageName();
         post.update(title, content, imageName);
+        if(oldImageName != null && !oldImageName.equals(imageName)){
+            imageService.delete(oldImageName);
+        }
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다: " + memberId));
         return PostResponse.from(post,member.getName());
