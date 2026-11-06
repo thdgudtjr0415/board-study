@@ -45,7 +45,7 @@ public class PostController {
             @PathVariable Long id,
             @AuthenticationPrincipal Long memberId,
             @RequestBody PostUpdateRequest request){
-        PostResponse post = postService.update(id,memberId, request.title(), request.content());
+        PostResponse post = postService.update(id,memberId, request.title(), request.content(), request.imageName());
         return post;
     }
 

@@ -71,10 +71,12 @@ public class Post {
         this.imageName = imageName;
     }
 
-    public void update(String title, String content){
+    public void update(String title, String content, String imageName){
         validate(title, content);
+        validateImageName(imageName);
         this.title = title;
         this.content = content;
+        this.imageName = imageName;
     }
 
 }
