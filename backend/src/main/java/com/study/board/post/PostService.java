@@ -29,10 +29,10 @@ public class PostService {
         this.commentRepository = commentRepository;
     }
     // 생성
-    public PostResponse create(String title, String content, Long memberId){
+    public PostResponse create(String title, String content, Long memberId, String imageName){
         log.info("글 생성 요청 memberId = {}", memberId);
 
-        Post newPost = new Post(null, title, content, memberId);
+        Post newPost = new Post(null, title, content, memberId, imageName);
         // 회원이 있는지 확인하면서 이름도 같이 가져온다 (existsById는 true/false만 줘서 이름을 못 가져옴)
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 회원입니다: " + memberId));

@@ -24,7 +24,7 @@ public class PostController {
     @ResponseStatus(HttpStatus.CREATED)
     public PostResponse create(@AuthenticationPrincipal Long memberId,
                                @RequestBody PostCreateRequest request){
-        PostResponse response = postService.create(request.title(), request.content(), memberId);
+        PostResponse response = postService.create(request.title(), request.content(), memberId ,request.imageName());
         return response;
     }
 

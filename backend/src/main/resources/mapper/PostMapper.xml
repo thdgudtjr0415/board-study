@@ -31,6 +31,7 @@
             <arg column="title" javaType="java.lang.String"/>
             <arg column="content" javaType="java.lang.String"/>
             <arg column="member_id" javaType="java.lang.Long"/>
+            <arg column="image_name" javaType="java.lang.String"/>
         </constructor>
     </resultMap>
     <resultMap id="postResponseMap" type="com.study.board.post.dto.PostResponse">
@@ -40,12 +41,13 @@
             <arg column="content" javaType="java.lang.String"/>
             <arg column="member_id" javaType="java.lang.Long"/>
             <arg column="author_name" javaType="java.lang.String"/>
+            <arg column="image_name" javaType="java.lang.String"/>
         </constructor>
     </resultMap>
 
     <!-- 작성자 이름 추가  -->
     <select id="findAllWithAuthor" resultMap="postResponseMap">
-        SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name
+        SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name, p.image_name
         FROM post p
         JOIN member m ON p.member_id = m.id
         ORDER BY p.id
@@ -53,7 +55,7 @@
 
     <!--  작성자 이름 추가하는 것 때문에 resultMap 만들어서 사용, JOIN 포함  -->
     <select id="findResponseById" resultMap="postResponseMap">
-        SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name
+        SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name, p.image_name
         FROM post p
         JOIN member m ON p.member_id = m.id
         WHERE p.id = #{id}
@@ -65,7 +67,7 @@
       ${id} 는 문자열을 그냥 끼워 넣어서 위험하므로 값 자리에는 쓰지 않는다.
     -->
     <select id="findById" resultMap="postMap">
-        SELECT id, title, content, member_id
+        SELECT id, title, content, member_id, image_name
         FROM post
         WHERE id = #{id}
     </select>
