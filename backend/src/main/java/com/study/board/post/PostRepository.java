@@ -14,4 +14,9 @@ public interface PostRepository {
 
     List<PostResponse> findAllWithAuthor();
     Optional<PostResponse> findResponseById(Long id);
+
+    // 조회수 관련
+    int selectViewCount(Long id);
+    // 이건 Spring에서 하는거라서 동시성 문제가 생김
+    void increaseViewCount(Long id);
 }

@@ -36,6 +36,7 @@ public class PostController {
     // 게시글 상세
     @GetMapping("/{id}")
     public PostResponse get(@PathVariable Long id){
+        postService.increaseViewCount(id);
         PostResponse post = postService.findResponseById(id);
         return post;
     }

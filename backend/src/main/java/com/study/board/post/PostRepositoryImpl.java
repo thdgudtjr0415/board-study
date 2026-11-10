@@ -61,4 +61,16 @@ public class PostRepositoryImpl implements PostRepository{
     public Optional<PostResponse> findResponseById(Long id) {
         return postMapper.findResponseById(id);
     }
+
+    @Override
+    public int selectViewCount(Long id) {
+        return postMapper.selectViewCount(id);
+    }
+
+    @Override
+    public void increaseViewCount(Long id) {
+        postMapper.increaseViewCount(id);
+    }
+
+
 }

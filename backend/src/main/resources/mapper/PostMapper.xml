@@ -42,12 +42,13 @@
             <arg column="member_id" javaType="java.lang.Long"/>
             <arg column="author_name" javaType="java.lang.String"/>
             <arg column="image_name" javaType="java.lang.String"/>
+            <arg column="view_count" javaType="_int"/>
         </constructor>
     </resultMap>
 
     <!-- 작성자 이름 추가  -->
     <select id="findAllWithAuthor" resultMap="postResponseMap">
-        SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name, p.image_name
+        SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name, p.image_name, p.view_count
         FROM post p
         JOIN member m ON p.member_id = m.id
         ORDER BY p.id
@@ -55,7 +56,7 @@
 
     <!--  작성자 이름 추가하는 것 때문에 resultMap 만들어서 사용, JOIN 포함  -->
     <select id="findResponseById" resultMap="postResponseMap">
-        SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name, p.image_name
+        SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name, p.image_name, p.view_count
         FROM post p
         JOIN member m ON p.member_id = m.id
         WHERE p.id = #{id}
@@ -76,4 +77,17 @@
 <!--        INSERT INTO post (title, content, member_id)-->
 <!--        VALUES (#{title}, #{content}, #{memberId})-->
 <!--    </insert>-->
+
+    <!-- 조회수 -->
+    <select id="selectViewCount" resultType="int">
+        SELECT view_count
+        FROM post
+        WHERE id = #{id}
+    </select>
+
+    <update id="increaseViewCount">
+        UPDATE post
+        SET view_count = view_count + 1
+        WHERE id = #{id}
+    </update>
 </mapper>

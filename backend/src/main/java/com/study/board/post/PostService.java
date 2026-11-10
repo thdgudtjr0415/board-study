@@ -40,7 +40,7 @@ public class PostService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 회원입니다: " + memberId));
         Post saved = postRepository.save(newPost);
-        return PostResponse.from(saved, member.getName());
+        return PostResponse.from(saved, member.getName(), 0);
     }
     // 목록
     public List<PostResponse> findAllWithAuthor() {
@@ -56,6 +56,12 @@ public class PostService {
     public PostResponse findResponseById(Long id){
         return postRepository.findResponseById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
+    }
+
+    // 조회수증가
+    public void increaseViewCount(Long id){
+        postRepository.findResponseById(id).orElseThrow(() -> new PostNotFoundException(id));
+        postRepository.increaseViewCount(id);
     }
 
     // update
@@ -76,7 +82,7 @@ public class PostService {
         }
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다: " + memberId));
-        return PostResponse.from(post,member.getName());
+        return PostResponse.from(post,member.getName(), postRepository.selectViewCount(id));
     }
 
     // 삭제

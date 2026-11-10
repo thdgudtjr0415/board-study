@@ -14,4 +14,6 @@ public interface PostMapper {
     Optional<Post> findById(Long id);
     List<PostResponse> findAllWithAuthor();
     Optional<PostResponse> findResponseById(Long id);
+    int selectViewCount(Long id);
+    void increaseViewCount(Long id);
 }

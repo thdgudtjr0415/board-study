@@ -8,8 +8,9 @@ public record PostResponse(Long id,
                            String content,
                            Long memberId,
                            String authorName,
-                           String imageName) {
-    public static PostResponse from(Post post, String authorName){
+                           String imageName,
+                           int viewCount) {
+    public static PostResponse from(Post post, String authorName, int viewCount){
         // 응답에 줄 필드만 골라 담는 변환을 여기 모아 둠
         return new PostResponse(
                 post.getId(),
@@ -17,7 +18,8 @@ public record PostResponse(Long id,
                 post.getContent(),
                 post.getMemberId(),
                 authorName,
-                post.getImageName()
+                post.getImageName(),
+                viewCount
                 );
     }
 }
