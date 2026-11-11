@@ -34,9 +34,11 @@ public class PostController {
     }
 
     // 게시글 상세
+    // @AuthenticationPrincipal: 토큰으로 확인된 로그인 회원 번호를 파라미터로 받아 줌 (로그인 안 했으면 null)
     @GetMapping("/{id}")
-    public PostResponse get(@PathVariable Long id){
-        postService.increaseViewCount(id);
+    public PostResponse get(@PathVariable Long id,
+                            @AuthenticationPrincipal Long memberId){
+        postService.increaseViewCount(id, memberId);
         PostResponse post = postService.findResponseById(id);
         return post;
     }

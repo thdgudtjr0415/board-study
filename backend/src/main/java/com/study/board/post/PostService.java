@@ -59,9 +59,12 @@ public class PostService {
     }
 
     // 조회수증가
-    public void increaseViewCount(Long id){
-        postRepository.findResponseById(id).orElseThrow(() -> new PostNotFoundException(id));
-        postRepository.increaseViewCount(id);
+    public void increaseViewCount(Long id, Long memberId){
+        PostResponse post = postRepository.findResponseById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
+        if(!post.memberId().equals(memberId)){
+            postRepository.increaseViewCount(id);
+        }
     }
 
     // update
