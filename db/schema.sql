@@ -25,7 +25,7 @@ CREATE TABLE post (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     title       VARCHAR(255) NOT NULL,
     content     TEXT NOT NULL,
-    image_name  VARCHAR(100),
+    image_name  VARCHAR(100),      -- 이미지 추가   
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     view_count  INT NOT NULL DEFAULT 0,
@@ -58,3 +58,32 @@ CREATE TABLE notification (
 	FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE,
 	FOREIGN KEY (comment_id) REFERENCES comment(id) ON DELETE CASCADE
 );
+SELECT id, title, image_name, member_id  FROM post ORDER BY id DESC;
+
+
+
+SHOW INDEX FROM post;
+
+CREATE TABLE post_exp LIKE post;
+SHOW INDEX FROM post_exp;
+SELECT seq FROM seq_1_to_3;   -- seq_1_to_3 이건 1 ~ 3 까지 가짜 테이블
+
+-- seq_1_to_N: MariaDB가 제공하는 1부터 N까지 숫자가 한 줄씩 있는 가짜 테이블 (열 이름은 seq)
+-- seq_1_to_N: 1부터 N까지 숫자 한 줄씩 (MariaDB 전용 숫자표, 열 이름 seq)
+INSERT INTO post_exp (title, content, member_id)
+SELECT CONCAT('글 제목 ', seq), '실험용 내용', 11
+FROM seq_1_to_100000;
+
+SELECT COUNT(*) FROM post_exp; -- 100,000 개 나오는지 확인
+
+-- EXPLAIN: SQL 앞에 붙이면 실행 대신 "찾는 계획"을 보여 줌
+-- type=ALL 전부 읽기 / key=쓴 인덱스(NULL이면 안 씀) / rows=읽을 줄 수 예상
+EXPLAIN SELECT * FROM post_exp WHERE title = '글 제목 77777';
+
+-- CREATE INDEX 이름 ON 테이블 (열): 그 열에 색인(인덱스)을 만들어 검색을 빠르게 함
+CREATE INDEX idx_post_exp_title ON post_exp (title);
+
+EXPLAIN SELECT * FROM post_exp WHERE title = '글 제목 77777';
+
+EXPLAIN SELECT * FROM post_exp WHERE title LIKE '글 제목 7777%';   -- 앞부분이 정해진 검색
+EXPLAIN SELECT * FROM post_exp WHERE title LIKE '%77777';          -- 앞부분이 안 정해진 검색
