@@ -150,3 +150,36 @@ FROM comment_exp c
 JOIN member_exp m ON c.member_id = m.id
 WHERE c.post_id = 777
 ORDER BY c.id;
+
+
+-- ===== 페이지네이션: OFFSET이 클 때 (2026-11-15) =====
+-- ANALYZE: EXPLAIN과 달리 쿼리를 실제로 실행하고, 실제로 읽은 행 수(r_rows)까지 보여 준다
+-- 세 쿼리 모두 결과는 글 10개로 같다. 다른 것은 "그 10개를 얻으려고 DB가 몇 개를 읽었나"
+
+-- 1페이지: 기본키 인덱스 끝에서 10개만 읽고 멈춤 (p의 r_rows 10, 0.001초)
+ANALYZE
+SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name, p.image_name, p.view_count
+FROM post_exp p
+JOIN member_exp m ON p.member_id = m.id
+ORDER BY p.id DESC
+LIMIT 10 OFFSET 0;
+
+-- 10000페이지 OFFSET: 건너뛸 99990개까지 약 10만 개를 다 읽고 버림 (회원 1000 x 글 100, 0.171초)
+-- → OFFSET은 건너뛰는 행도 읽기 때문에 뒤 페이지일수록 느려진다
+ANALYZE
+SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name, p.image_name, p.view_count
+FROM post_exp p
+JOIN member_exp m ON p.member_id = m.id
+ORDER BY p.id DESC
+LIMIT 10 OFFSET 99990;
+
+-- 10000페이지를 키셋 방식으로 (9999페이지의 마지막 id = 11)
+-- 키셋: "몇 개 건너뛸지(OFFSET)" 대신 "마지막으로 본 글의 키(id)보다 작은 것"으로 다음 페이지를 찾는다
+-- 기본키 인덱스에서 11 바로 아래로 바로 건너가 10개만 읽음 (type range, r_rows 10, 0.001초)
+-- → 몇 번째 페이지든 빠르지만, "37페이지로 바로 가기"는 못 한다 (앞 페이지의 마지막 id를 알아야 하므로)
+ANALYZE
+SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name, p.image_name, p.view_count
+FROM post_exp p
+JOIN member_exp m ON p.member_id = m.id
+WHERE p.id < 11
+ORDER BY p.id DESC LIMIT 10;
