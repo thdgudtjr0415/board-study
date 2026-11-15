@@ -2,6 +2,7 @@ package com.study.board.post;
 
 import com.study.board.post.dto.PostResponse;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,4 +17,9 @@ public interface PostMapper {
     Optional<PostResponse> findResponseById(Long id);
     int selectViewCount(Long id);
     void increaseViewCount(Long id);
+
+    // 페이지네이션
+    List<PostResponse> findPageWithAuthor(@Param("size") int size,
+                                          @Param("offset") int offset);
+    long countAll();
 }

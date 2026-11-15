@@ -19,4 +19,7 @@ public interface PostRepository {
     int selectViewCount(Long id);
     // 이건 Spring에서 하는거라서 동시성 문제가 생김
     void increaseViewCount(Long id);
+    // 페이지네이션
+    List<PostResponse> findPageWithAuthor(int size, int offset);
+    long countAll();
 }

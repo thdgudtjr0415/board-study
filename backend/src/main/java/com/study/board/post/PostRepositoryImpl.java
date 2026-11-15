@@ -72,5 +72,15 @@ public class PostRepositoryImpl implements PostRepository{
         postMapper.increaseViewCount(id);
     }
 
+    @Override
+    public List<PostResponse> findPageWithAuthor(int size, int offset) {
+        return postMapper.findPageWithAuthor(size, offset);
+    }
+
+    @Override
+    public long countAll() {
+        return postMapper.countAll();
+    }
+
 
 }

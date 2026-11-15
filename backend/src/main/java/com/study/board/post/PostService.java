@@ -4,6 +4,7 @@ import com.study.board.comment.CommentRepository;
 import com.study.board.image.ImageService;
 import com.study.board.member.Member;
 import com.study.board.member.MemberRepository;
+import com.study.board.post.dto.PostPageResponse;
 import com.study.board.post.dto.PostResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,9 +43,21 @@ public class PostService {
         Post saved = postRepository.save(newPost);
         return PostResponse.from(saved, member.getName(), 0);
     }
+
     // 목록
     public List<PostResponse> findAllWithAuthor() {
         return postRepository.findAllWithAuthor();
+    }
+
+    // 페이지네이션
+    public PostPageResponse findPage(int page, int size){
+        page = Math.max(1, page);
+        size = Math.min(50, Math.max(1, size));
+        int offset = (page - 1) * size;
+        List<PostResponse> list = postRepository.findPageWithAuthor(size, offset);
+        long totalCount = postRepository.countAll();
+        int totalPages = (int) Math.ceil((double) totalCount / size);
+        return new PostPageResponse(list, page, size, totalCount, totalPages);
     }
 
     // ID 찾기

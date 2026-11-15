@@ -1,6 +1,7 @@
 package com.study.board.post;
 
 import com.study.board.post.dto.PostCreateRequest;
+import com.study.board.post.dto.PostPageResponse;
 import com.study.board.post.dto.PostResponse;
 import com.study.board.post.dto.PostUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +28,17 @@ public class PostController {
         PostResponse response = postService.create(request.title(), request.content(), memberId ,request.imageName());
         return response;
     }
+//    // 기본 list 조회
+//    @GetMapping
+//    public List<PostResponse> list(){
+//        return postService.findAllWithAuthor();
+//    }
 
+    // 페이지네이션 추가
     @GetMapping
-    public List<PostResponse> list(){
-        return postService.findAllWithAuthor();
+    public PostPageResponse list(@RequestParam(defaultValue = "1") int page,
+                                 @RequestParam(defaultValue = "10") int size){
+        return postService.findPage(page, size);
     }
 
     // 게시글 상세

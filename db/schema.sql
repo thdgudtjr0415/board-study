@@ -87,3 +87,66 @@ EXPLAIN SELECT * FROM post_exp WHERE title = '글 제목 77777';
 
 EXPLAIN SELECT * FROM post_exp WHERE title LIKE '글 제목 7777%';   -- 앞부분이 정해진 검색
 EXPLAIN SELECT * FROM post_exp WHERE title LIKE '%77777';          -- 앞부분이 안 정해진 검색
+
+-- member와 같은 모양의 실험용 테이블 (login_id의 UNIQUE 인덱스도 같이 복사됨)
+CREATE TABLE member_exp LIKE member;
+
+-- 회원 1000명: user1~user1000 (login_id는 중복 불가라 번호를 붙여 다 다르게 만듦)
+INSERT INTO member_exp (login_id, pwd, name)
+SELECT CONCAT('user', seq), 'x', CONCAT('회원', seq)  -- login, pwd, name 순으로 들어가는것
+FROM seq_1_to_1000;
+
+SELECT COUNT(*) FROM member_exp;     -- 기대: 1000
+SELECT MIN(id), MAX(id) FROM member_exp;   -- 기대: 1, 1000
+
+SELECT * FROM member_exp; 
+
+-- % 는 나머지: 글 번호를 1000으로 나눈 나머지에 1을 더해 작성자를 1~1000번에 돌아가며 배정
+UPDATE post_exp SET member_id = (id % 1000) + 1;
+
+SELECT * FROM post_exp;
+
+SELECT MIN(member_id), MAX(member_id) FROM post_exp;           -- 기대: 1, 1000
+SELECT COUNT(DISTINCT member_id) FROM post_exp;                -- 기대: 1000 (서로 다른 작성자 수)
+
+-- 글 목록 쿼리 (PostMapper.findAllWithAuthor)의 실험용 복제본. 테이블 이름만 _exp로 바꿈
+EXPLAIN
+SELECT p.id, p.title, p.content, p.member_id, m.name AS author_name, p.image_name, p.view_count
+FROM post_exp p
+JOIN member_exp m ON p.member_id = m.id
+ORDER BY p.id;
+
+
+-- 댓글 5만 개: 작성자는 1~1000번, 글은 1~100000번에 돌아가며 배정
+CREATE TABLE comment_exp LIKE comment;
+INSERT INTO comment_exp (content, member_id, post_id)
+SELECT '실험용 댓글', (seq % 1000) + 1, (seq % 100000) + 1
+FROM seq_1_to_50000;
+
+-- 알림 5만 개: 받는 사람 1~1000번, comment_id는 방금 만든 댓글 번호(1~50000)와 짝
+CREATE TABLE notification_exp LIKE notification;
+INSERT INTO notification_exp (is_read, member_id, post_id, comment_id)
+SELECT seq % 2, (seq % 1000) + 1, (seq % 100000) + 1, seq
+FROM seq_1_to_50000;
+
+SELECT COUNT(*) FROM comment_exp;        -- 기대: 50000
+SELECT COUNT(*) FROM notification_exp;   -- 기대: 50000
+
+-- 알림 목록 쿼리 (NotificationMapper.findByMemberId)의 실험용 복제본. 테이블 이름만 _exp로, #{memberId}는 7로 바꿈
+EXPLAIN
+SELECT n.id, n.post_id, n.comment_id, m.name AS commenter_name,
+       CONCAT(LEFT(c.content, 10), IF(CHAR_LENGTH(c.content) > 10, '...', '')) AS comment_preview,
+       n.is_read, n.created_at
+FROM notification_exp n
+JOIN comment_exp c ON n.comment_id = c.id
+JOIN member_exp m ON c.member_id = m.id
+WHERE n.member_id = 7
+ORDER BY n.id DESC;
+
+-- 댓글 목록 쿼리 (CommentMapper.findByPostIdWithAuthor)의 실험용 복제본. 테이블 이름만 _exp로, #{postId}는 777로 바꿈
+EXPLAIN
+SELECT c.id, c.content, c.member_id, c.post_id, m.name AS author_name
+FROM comment_exp c
+JOIN member_exp m ON c.member_id = m.id
+WHERE c.post_id = 777
+ORDER BY c.id;
