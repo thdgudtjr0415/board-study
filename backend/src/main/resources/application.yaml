@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: board-study                  # 앱 이름 (로그에 [board-study]로 찍힘)
+  web:
+    error:
+      include-stacktrace: never  # 에러 응답에 스택 트레이스를 넣지 않음 (Boot 4는 spring.web.error, 3까지는 server.error)
+      include-message: never      # 처리 못 한 에러의 내부 메시지(라이브러리 문장)도 응답에 넣지 않음
 
   config:
     # 작업 폴더(backend/)의 pwd.env 파일을 읽어서 설정에 합친다.
