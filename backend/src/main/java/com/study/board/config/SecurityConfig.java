@@ -5,9 +5,11 @@ import com.study.board.auth.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -20,6 +22,7 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())     // 기본 로그인 화면을 끈다 (우리는 /auth/login API가 있음)
                 .httpBasic(basic -> basic.disable())   // 브라우저 기본 로그인 팝업을 끈다
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 만들지 않는다 (토큰으로만 확인)
+                .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))) // 토큰이 없거나 잘못되면 401 (누구인지 모름)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()                         // 로그인 API는 누구나
                         .requestMatchers(HttpMethod.POST, "/members").permitAll()        // 회원 가입은 누구나
