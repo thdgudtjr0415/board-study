@@ -183,3 +183,20 @@ FROM post_exp p
 JOIN member_exp m ON p.member_id = m.id
 WHERE p.id < 11
 ORDER BY p.id DESC LIMIT 10;
+
+-- 회원별 비밀번호가 BCrypt 해시인지 확인 (해시는 $2a$10$ 로 시작)
+SELECT
+id, 
+login_id, 
+name, 
+LEFT(pwd, 7) AS pwd_head,
+CHAR_LENGTH(pwd) AS pwd_len
+FROM member
+ORDER BY id;
+
+-- 비번 tmpmember 로 바꿈
+UPDATE member m
+JOIN member t ON t.id = 15
+SET m.pwd = t.pwd
+WHERE m.id IN (8,10);
+
